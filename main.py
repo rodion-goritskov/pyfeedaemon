@@ -69,9 +69,9 @@ def openConfig():
 
 def sendEmail():
     msg = email.message.Message()
-    fp = open('feed.html', 'r', encoding='utf-8')
+    fp = open('feed.html', 'r')
     msg = MIMEText(fp.read(), 'html')
-    fp.close()
+    fp.close
     msg['Subject'] = 'Дайджест новостей ' + datetime.now().strftime("%d %B %Y %H:%M")
     mail = SMTP_SSL(config['server'], 465)
     mail.login(config['login'], config['password'])

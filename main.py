@@ -55,6 +55,7 @@ def openConfig():
         conf['server'] = config['Mail']['Server']
         conf['login'] = config['Mail']['Login']
         conf['password'] = config['Mail']['Password']
+        conf['sendto'] = config['Mail']['SendTo']
         for key in config['Feeds']:
             temp = Feed(config['Feeds'][key], fd)
             conf['feeds'].append(temp)
@@ -71,12 +72,12 @@ def sendEmail():
     msg = email.message.Message()
     fp = open('feed.html', 'r')
     msg = MIMEText(fp.read(), 'html')
-    fp.close
+    fp.close()
     msg['Subject'] = 'Дайджест новостей ' + datetime.now().strftime("%d %B %Y %H:%M")
     mail = SMTP_SSL(config['server'], 465)
     mail.login(config['login'], config['password'])
-    mail.send_message(msg, 'rodion.goritskov@gmail.com',
-                      'rodion@goritskov.com')
+    mail.send_message(msg, config['login'],
+                      config['sendto'])
 
 
 fd = initFile()

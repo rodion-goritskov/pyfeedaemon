@@ -47,7 +47,7 @@ def openConfig():
 
     config = configparser.ConfigParser()
     curtime = str(datetime.utcnow())
-    conf = {'server': 0, 'login': 0, 'password': 0, 'time': 0}
+    conf = {'server': 0, 'login': 0, 'password': 0, 'time': 0, 'feeds': []}
     if config.read('example.ini'):
         conf['time'] = datetime.strptime(config['Last fetch']['Time'],
                                          '%Y-%m-%d %H:%M:%S.%f')
@@ -55,6 +55,9 @@ def openConfig():
         conf['server'] = config['Mail']['Server']
         conf['login'] = config['Mail']['Login']
         conf['password'] = config['Mail']['Password']
+        for key in config['Feeds']:
+            temp = Feed(config['Feeds'][key], fd)
+            conf['feeds'].append(temp)
     else:
         config['Last fetch'] = {}
         config['Last fetch']['Time'] = curtime
@@ -81,11 +84,7 @@ config = openConfig()
 
 print(config['time'])
 
-habr = Feed('http://habrahabr.ru/rss/hubs/', fd)
-lor = Feed('http://feeds.feedburner.com/org/LOR', fd)
-
-feeds_list = {habr, lor}
-for i in feeds_list:
+for i in config['feeds']:
     flag = i.feed_write()
 fd.close()
 

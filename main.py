@@ -4,17 +4,19 @@ from datetime import datetime
 from smtplib import *
 import email
 from email.mime.text import MIMEText
+import sys
+import os
 
 
 class Feed:
-    def __init__(self, url, fd):
+    def __init__(self, url):
         self.url = url
-        self.fd = fd
+        #self.fd = fd
         self.feed = feedparser.parse(self.url)
         self.flag = False
 
     def feed_write(self):
-        self.fd.write('<h1>' + self.feed.feed.title + '</h1>\n')
+        fd.write('<h1>' + self.feed.feed.title + '</h1>\n')
         for self.i in self.feed.entries:
             self.published_time = datetime(self.i.published_parsed[0],
                                            self.i.published_parsed[1],
@@ -24,9 +26,9 @@ class Feed:
             print(self.published_time)
             if self.published_time >= config['time']:
                 self.flag = True
-                self.fd.write('<h2>' + self.i.title + '</h2>')
-                self.fd.write(self.i.published + '</br>')
-                self.fd.write(self.i.description + '</br>')
+                fd.write('<h2>' + self.i.title + '</h2>')
+                fd.write(self.i.published + '</br>')
+                fd.write(self.i.description + '</br>')
         return self.flag
 
 
@@ -40,15 +42,17 @@ def initFile():
 
 
 def openConfig():
-    '''Reads time from example.ini and writes new time of fetch to it.
-    Creates new config file if current is empty
-    Returns time of the last fetch
-    or current time if there is no config file.'''
-
+    '''Reads time from pyfeedaemon.conf and writes new time of fetch to it.
+    Config path can be passed as an argument to the script.
+    Default path is located at $HOME/.config/pyfeedaemon/pyfeedaemon.conf'''
+    if len(sys.argv) != 2:
+        config_path = os.environ["HOME"] + "/.config/pyfeedaemon/pyfeedaemon.conf"
+    else:
+        config_path = sys.argv[1]
     config = configparser.ConfigParser()
     curtime = str(datetime.utcnow())
     conf = {'server': 0, 'login': 0, 'password': 0, 'time': 0, 'feeds': []}
-    if config.read('example.ini'):
+    if config.read(config_path):
         conf['time'] = datetime.strptime(config['Last fetch']['Time'],
                                          '%Y-%m-%d %H:%M:%S.%f')
         config['Last fetch']['Time'] = curtime
@@ -57,13 +61,12 @@ def openConfig():
         conf['password'] = config['Mail']['Password']
         conf['sendto'] = config['Mail']['SendTo']
         for key in config['Feeds']:
-            temp = Feed(config['Feeds'][key], fd)
+            temp = Feed(config['Feeds'][key])
             conf['feeds'].append(temp)
     else:
-        config['Last fetch'] = {}
-        config['Last fetch']['Time'] = curtime
-        conf['time'] = datetime.utcnow()
-    with open('example.ini', 'w') as configfile:
+        print("Config file does not exist!")
+        raise SystemExit(1)
+    with open(config_path, 'w') as configfile:
         config.write(configfile)
     return conf
 
@@ -79,7 +82,6 @@ def sendEmail():
     mail.send_message(msg, config['login'],
                       config['sendto'])
 
-
 fd = initFile()
 config = openConfig()
 
@@ -91,3 +93,5 @@ fd.close()
 
 if flag is True:
     sendEmail()
+else:
+    print("No mail was sent!")

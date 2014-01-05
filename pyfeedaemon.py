@@ -27,7 +27,8 @@ def sendEmail():
                       config['sendto'])
 
 fd = initFile()
-config = config.openConfig()
+config_file = config.Config()
+config = config_file.config_read()
 
 print(config['time'])
 
@@ -35,6 +36,8 @@ for i in config['feeds']:
     temp = Feed(i, fd, config['time'])
     flag = temp.feed_write()
 fd.close()
+
+config_file.write_last_fetch()
 
 if flag is True:
     sendEmail()

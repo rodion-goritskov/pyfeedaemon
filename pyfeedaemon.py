@@ -17,6 +17,9 @@ def initFile():
 
 
 def sendEmail():
+    '''Sends file feed.html to the email specified 
+    in configuration file using SMTP server,
+    username and password from config file'''
     msg = email.message.Message()
     fp = open('feed.html', 'r')
     msg = MIMEText(fp.read(), 'html')
@@ -27,31 +30,34 @@ def sendEmail():
     mail.send_message(msg, config['login'],
                       config['sendto'])
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--config")
-parser.add_argument("--addfeed")
-args = parser.parse_args()
-if args.config:
-    config_file = config.Config(args.config)
-else:
-    config_file = config.Config()
-if args.addfeed:
-    config_file.new_feed("new", args.addfeed)
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config")
+    parser.add_argument("--addfeed")
+    args = parser.parse_args()
 
-fd = initFile()
-config = config_file.config_read()
+    if args.config:
+        config_file = config.Config(args.config)
+    else:
+        config_file = config.Config()
+    if args.addfeed:
+        new_feed_list = args.addfeed.replace(" ", "").split("=")
+        config_file.new_feed(new_feed_list[0], new_feed_list[1])
 
-print(config['time'])
+    fd = initFile()
+    config = config_file.config_read()
 
-for i in config['feeds']:
-    temp = Feed(i, fd, config['time'])
-    flag = temp.feed_write()
-fd.close()
+    print(config['time'])
 
-config_file.write_last_fetch()
+    for i in config['feeds']:
+        temp = Feed(i, fd, config['time'])
+        flag = temp.feed_write()
+    fd.close()
 
-if flag is True:
-    sendEmail()
-else:
-    print("No mail was sent!")
+    config_file.write_last_fetch()
+
+    if flag is True:
+        sendEmail()
+    else:
+        print("No mail was sent!")

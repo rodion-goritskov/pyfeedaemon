@@ -4,6 +4,7 @@ import email
 from email.mime.text import MIMEText
 import config
 from feeds import Feed
+import argparse
 
 
 def initFile():
@@ -26,8 +27,19 @@ def sendEmail():
     mail.send_message(msg, config['login'],
                       config['sendto'])
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--config")
+parser.add_argument("--addfeed")
+args = parser.parse_args()
+if args.config:
+    config_file = config.Config(args.config)
+else:
+    config_file = config.Config()
+if args.addfeed:
+    config_file.new_feed("new", args.addfeed)
+
+
 fd = initFile()
-config_file = config.Config()
 config = config_file.config_read()
 
 print(config['time'])

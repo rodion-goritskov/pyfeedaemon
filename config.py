@@ -34,6 +34,9 @@ class Config():
     def new_feed(self, feed_name, feed_address):
         self.feed_name = feed_name
         self.feed_address = feed_address
+        for key in self.config['Feeds']:
+            if (self.config['Feeds'][key] == self.feed_address) || (key == self.feed_name):
+                
         #if (self.feed_name) & (self.feed_address):
         self.config['Feeds'][self.feed_name] = self.feed_address
         with open(self.config_path, 'w') as configfile:

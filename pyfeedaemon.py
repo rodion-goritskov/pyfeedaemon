@@ -17,7 +17,7 @@ def initFile():
 
 
 def sendEmail():
-    '''Sends file feed.html to the email specified 
+    '''Sends file feed.html to the email specified
     in configuration file using SMTP server,
     username and password from config file'''
     msg = email.message.Message()

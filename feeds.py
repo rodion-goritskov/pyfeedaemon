@@ -3,12 +3,13 @@ from datetime import datetime
 
 
 class Feed:
-    def __init__(self, url, feed_file, last_time):
+    def __init__(self, url, feed_file, last_time, print_log=False):
         self.url = url
         self.fd = feed_file
         self.feed = feedparser.parse(self.url)
         self.config_time = last_time
         self.flag = False
+        self.print_log = print_log
 
     def feed_write(self):
         self.fd.write('<h1>' + self.feed.feed.title + '</h1>\n')
@@ -18,7 +19,8 @@ class Feed:
                                            self.i.published_parsed[2],
                                            self.i.published_parsed[3],
                                            self.i.published_parsed[4])
-            print(self.published_time)
+            if self.print_log is True:
+                print(self.published_time)
             if self.published_time >= self.config_time:
                 self.flag = True
                 self.fd.write('<h2>' + self.i.title + '</h2>')

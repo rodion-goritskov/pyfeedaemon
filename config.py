@@ -5,20 +5,17 @@ import os
 
 class Config():
     '''Class for operating config file'''
-    def __init__(self, config_path=os.environ["HOME"]
-                 + "/.config/pyfeedaemon/pyfeedaemon.conf"):
-        '''Object is created with only one parameter - path to the config.
-        If no path is specified, the default one
-        ($HOME/.config/pyfeedaemon/pyfeedaemon.conf) is used '''
+    def __init__(self, config_path):
+        '''Object is created with only one parameter - path to the config.'''
         self.config_path = config_path
         self.config = configparser.ConfigParser()
         self.conf = {'server': 0, 'login': 0, 'password': 0,
                      'time': 0, 'feeds': []}
-        if self.config.read(self.config_path):
-            pass
-        else:
-            print("Config file does not exist!")
+        if os.path.exists(self.config_path) is False:
+            print("Config file " + self.config_path + " doesn't exist!")
             raise SystemExit(1)
+        else:
+            self.config.read(self.config_path)
 
     def config_read(self):
         '''Parses config. Returns a parsed configuration object.'''

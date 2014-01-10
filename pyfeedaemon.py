@@ -5,12 +5,17 @@ from email.mime.text import MIMEText
 import config
 from feeds import Feed
 import argparse
+import os
+
+# Hardcoding default data folder and config name
+DATA_FOLDER_PATH = os.environ["HOME"] + "/.config/pyfeedaemon/"
+CONFIG_FILE_NAME = "pyfeedaemon.conf"
 
 
 def initFile():
     '''Creates feed file and writes proper charser meta to it.
     Returns opened file. '''
-    fd = open('feed.html', 'w')
+    fd = open(DATA_FOLDER_PATH + 'feed.html', 'w')
     fd.write(
         '<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">\n')
     return fd
@@ -21,7 +26,7 @@ def sendEmail():
     in configuration file using SMTP server,
     username and password from config file'''
     msg = email.message.Message()
-    fp = open('feed.html', 'r')
+    fp = open(DATA_FOLDER_PATH + 'feed.html', 'r')
     msg = MIMEText(fp.read(), 'html')
     fp.close()
     msg['Subject'] = 'Дайджест новостей ' + datetime.now().strftime("%d %B %Y %H:%M")
@@ -32,15 +37,30 @@ def sendEmail():
 
 
 if __name__ == '__main__':
+    # Parsing command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("--config")
     parser.add_argument("--addfeed")
+    parser.add_argument("--print_log", action='store_true')
     args = parser.parse_args()
 
+    # If config folder doesn't exist - create it!
+    if os.path.exists(DATA_FOLDER_PATH) is False:
+        if os.makedirs(DATA_FOLDER_PATH) is False:
+            print("Failed to create program data folder. Exiting!")
+            raise SystemExit()
+
+    # Openin config file, default or specified in argument
     if args.config:
         config_file = config.Config(args.config)
     else:
-        config_file = config.Config()
+        config_file = config.Config(DATA_FOLDER_PATH + CONFIG_FILE_NAME)
+
+    if args.print_log:
+        print_log = True
+    else:
+        print_log = False
+
     if args.addfeed:
         new_feed_list = args.addfeed.replace(" ", "").split("=")
         config_file.new_feed(new_feed_list[0], new_feed_list[1])
@@ -48,10 +68,11 @@ if __name__ == '__main__':
     fd = initFile()
     config = config_file.config_read()
 
-    print(config['time'])
+    if print_log:
+        print(config['time'])
 
     for i in config['feeds']:
-        temp = Feed(i, fd, config['time'])
+        temp = Feed(i, fd, config['time'], print_log)
         flag = temp.feed_write()
     fd.close()
 

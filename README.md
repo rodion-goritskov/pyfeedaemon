@@ -5,14 +5,19 @@ pyFeedaemon is NOT a daemon for retrieving RSS feeds and sending them to specifi
 Requirements
 -----------------
 pyFeedaemon is written on Python.
+
 Required version is >=3.3. Feedparser and configparser modules are 
 necessary and could be installed with pip. 
 
 Settings
 ----------------
-All settings are stored in settings file. Default path to settings file 
+All settings are stored in settings file. 
+
+Default path to settings file 
 is $HOME/.config/pyfeedaemon/pyfeedaemon.conf.
+
 However, you can specify path with --config when running the pyFeedaemon, i.e. pyfeedaemon.py --config [PATH TO CONFIG].
+
 You can switch on printing timestamps into console by starting pyfeedaemon with --print_log.
 
 Example config
@@ -22,6 +27,7 @@ Example config with comments is included.
 Adding feeds
 ---------------
 Also, you can add new feeds into config with --addfeed, i.e. pyfeedaemon.py --addfeed [FEED NAME]=[FEED ADDRESS]
+
 Added feed is stored in config file.
 
 Your code is really bad, dude!

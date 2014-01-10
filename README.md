@@ -1,3 +1,5 @@
+PyFeedaemon
+===================
 pyFeedaemon is NOT a daemon for retrieving RSS feeds and sending them to specified e-mail.
 
 Requirements

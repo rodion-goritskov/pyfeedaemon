@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''============================================================
 * pyFeedaemon - small thing for sending RSS feeds to e-mail
 * Copyright (C) 2013,2014 Rodion Goritskov <rodion@goritskov.com>

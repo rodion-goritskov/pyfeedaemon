@@ -27,8 +27,8 @@ class Feed:
         self.fd = feed_file
         self.feed = feedparser.parse(self.url)
         self.config_time = last_time
-        self.flag = False
         self.print_log = print_log
+        self.flag = False
 
     def feed_write(self):
         self.fd.write('<h1>' + self.feed.feed.title + '</h1>\n')

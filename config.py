@@ -52,8 +52,8 @@ class Config():
         '''Writes current time as fetch time to config'''
         self.curtime = str(datetime.utcnow())
         self.config['Last fetch']['Time'] = self.curtime
-        with open(self.config_path, 'w') as configfile:
-            self.config.write(configfile)
+        with open(self.config_path, 'w') as self.configfile:
+            self.config.write(self.configfile)
 
     def new_feed(self, feed_name, feed_address):
         '''method new_feed(feed_name, feed_address).
@@ -68,7 +68,7 @@ class Config():
                 self.duplicate = True
         if self.duplicate is False:
             self.config['Feeds'][self.feed_name] = self.feed_address
-            with open(self.config_path, 'w') as configfile:
-                self.config.write(configfile)
+            with open(self.config_path, 'w') as self.configfile:
+                self.config.write(self.configfile)
         else:
             print("Feed already exists!")

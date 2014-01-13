@@ -90,14 +90,18 @@ if __name__ == '__main__':
     if print_log:
         print(config['time'])
 
+    email_flag = False
+
     for i in config['feeds']:
         temp = Feed(i, fd, config['time'], print_log)
-        flag = temp.feed_write()
+        result = temp.feed_write()
+        if result is True:
+            email_flag = True
     fd.close()
 
     config_file.write_last_fetch()
 
-    if flag is True:
+    if email_flag is True:
         sendEmail()
     else:
         print("No mail was sent!")
